@@ -14,7 +14,6 @@
 3. **Generate Command**: Generate a 81 character string of a valid Sudoku puzzle
 4. **Display Command**: Render a Sudoku board from an 81-character string
 5. **IsValid Command**: Check if a puzzle is valid (no duplicates in row/col/box)
-6. **Configurable Empty Cell**: Allow users to specify the empty cell character via `-e` flag (default: `-`)
 6. **Input Validation**: Validate puzzle format (81 chars, valid digits, valid empty marker)
 
 ### Command Line Interface
@@ -42,8 +41,8 @@
 
 ## Technical Specification
 
-### Puzzle Structure
-- `Puzzle` struct holds both the puzzle and its solved state:
+### Puzzle Structure (generator package)
+- `Puzzle` struct holds both the puzzle and its solved state (generator package):
   - `Cells [81]int`: The puzzle grid (0 = empty)
   - `Solved [81]int`: The solved grid
 - `String(emptyChar)` method: Returns 81-char string representation with empty char

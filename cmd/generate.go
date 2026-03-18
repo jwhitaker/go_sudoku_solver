@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/jwhitaker/go_sudoku_solver/pkg/solver"
+	"github.com/jwhitaker/go_sudoku_solver/pkg/generator"
 )
 
 var difficulty string
@@ -15,7 +15,7 @@ var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate a Sudoku puzzle",
 	Run: func(cmd *cobra.Command, args []string) {
-		puzzle, err := solver.Generate(difficulty)
+		puzzle, err := generator.Generate(difficulty)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)

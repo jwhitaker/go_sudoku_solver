@@ -1,4 +1,4 @@
-package solver
+package generator
 
 import (
 	"fmt"
@@ -13,10 +13,10 @@ type Puzzle struct {
 }
 
 func Generate(difficulty string) (*Puzzle, error) {
-	rand.Seed(time.Now().UnixNano())
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	solved := generateSolved()
-	puzzle := removeNumbers(solved, difficulty)
+	solved := generateSolved(r)
+	puzzle := removeNumbers(solved, difficulty, r)
 
 	return &Puzzle{
 		Cells:  puzzle,
@@ -24,24 +24,24 @@ func Generate(difficulty string) (*Puzzle, error) {
 	}, nil
 }
 
-func generateSolved() [81]int {
+func generateSolved(r *rand.Rand) [81]int {
 	var grid [81]int
 	for i := range grid {
 		grid[i] = 0
 	}
-	solveSudoku(&grid)
+	solveSudoku(&grid, r)
 	return grid
 }
 
-func solveSudoku(grid *[81]int) bool {
+func solveSudoku(grid *[81]int, r *rand.Rand) bool {
 	for i := 0; i < 81; i++ {
 		if grid[i] == 0 {
-			nums := rand.Perm(9)
+			nums := r.Perm(9)
 			for _, n := range nums {
 				num := n + 1
-				if isValid(grid, i/9, i%9, num) {
+				if isValidPlacement(grid, i/9, i%9, num) {
 					grid[i] = num
-					if solveSudoku(grid) {
+					if solveSudoku(grid, r) {
 						return true
 					}
 					grid[i] = 0
@@ -53,7 +53,7 @@ func solveSudoku(grid *[81]int) bool {
 	return true
 }
 
-func isValid(grid *[81]int, row, col, num int) bool {
+func isValidPlacement(grid *[81]int, row, col, num int) bool {
 	for c := 0; c < 9; c++ {
 		if grid[row*9+c] == num {
 			return false
@@ -75,12 +75,12 @@ func isValid(grid *[81]int, row, col, num int) bool {
 	return true
 }
 
-func removeNumbers(solved [81]int, difficulty string) [81]int {
+func removeNumbers(solved [81]int, difficulty string, r *rand.Rand) [81]int {
 	var puzzle [81]int
 	copy(puzzle[:], solved[:])
 
 	attempts := getAttempts(difficulty)
-	positions := rand.Perm(81)
+	positions := r.Perm(81)
 	removed := 0
 
 	for _, pos := range positions {
