@@ -10,14 +10,17 @@
 
 ### Core Features
 1. **Dancing Links (DLX) Algorithm**: Implement Algorithm X with dancing links for efficient exact cover solving
-2. **CLI Interface**: Accept 81-character string from command line representing the puzzle
-3. **Configurable Empty Cell**: Allow users to specify the empty cell character via `-e` flag (default: `-`)
-4. **Input Validation**: Validate puzzle format (81 chars, valid digits, valid empty marker)
-5. **Solution Output**: Display solved puzzle as 81-character string and formatted 9x9 grid
+2. **Solve Command**: Accept 81-character string from command line representing the puzzle
+3. **Generate Command**: Generate valid Sudoku puzzles with solutions
+4. **Configurable Empty Cell**: Allow users to specify the empty cell character via `-e` flag (default: `-`)
+5. **Input Validation**: Validate puzzle format (81 chars, valid digits, valid empty marker)
+6. **Solution Output**: Display solved puzzle as 81-character string and formatted 9x9 grid
 
 ### Command Line Interface
-- Positional argument: 81-character puzzle string
-- `-e, --empty` flag: Character representing empty cells (default: `-`)
+- `solve <puzzle>`: Solve a Sudoku puzzle (positional argument: 81-character puzzle string)
+  - `-e, --empty` flag: Character representing empty cells (default: `-`)
+- `generate`: Generate a new Sudoku puzzle
+  - `-d, --difficulty` flag: Difficulty level - easy (30 removed), medium (40 removed), hard (50 removed) (default: easy)
 - `-h, --help` flag: Display usage information
 
 ### Input Validation
@@ -32,6 +35,14 @@
 - Multiple solutions: Display first solution found
 
 ## Technical Specification
+
+### Puzzle Structure
+- `Puzzle` struct holds both the puzzle and its solved state:
+  - `Cells [81]int`: The puzzle grid (0 = empty)
+  - `Solved [81]int`: The solved grid
+- `String(emptyChar)` method: Returns 81-char string representation with empty char
+- `SolvedString()` method: Returns 81-char string of solution
+- `FormatGrid(s string)` function: Formats 81-char string as readable 9x9 grid
 
 ### Dancing Links Structure
 - Implement exact cover matrix for Sudoku constraints:
@@ -51,3 +62,4 @@
 3. Empty cell marker is configurable
 4. Provides clear error messages for invalid input
 5. Returns solution in under 1 second for typical puzzles
+6. Generates valid, solvable Sudoku puzzles at three difficulty levels
