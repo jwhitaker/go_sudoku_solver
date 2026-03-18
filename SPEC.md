@@ -14,7 +14,8 @@
 3. **Generate Command**: Generate a 81 character string of a valid Sudoku puzzle
 4. **Display Command**: Render a Sudoku board from an 81-character string
 5. **IsValid Command**: Check if a puzzle is valid (no duplicates in row/col/box)
-6. **Input Validation**: Validate puzzle format (81 chars, valid digits, valid empty marker)
+6. **Book Command**: Generate a PDF book of Sudoku puzzles with solutions
+7. **Input Validation**: Validate puzzle format (81 chars, valid digits, valid empty marker)
 
 ### Command Line Interface
 - `solve [puzzle]`: Solve a Sudoku puzzle (positional argument or stdin)
@@ -26,6 +27,10 @@
   - `-e, --empty` flag: Character representing empty cells (default: `-`)
 - `isvalid [puzzle]`: Check if a puzzle is valid (positional argument or stdin)
   - `-e, --empty` flag: Character representing empty cells (default: `-`)
+- `book <filename>`: Generate a PDF book of puzzles followed by solutions
+  - `-e, --easy` flag: Number of easy puzzles (default: 5)
+  - `-m, --medium` flag: Number of medium puzzles (default: 5)
+  - `-H, --hard` flag: Number of hard puzzles (default: 5)
 - `-h, --help` flag: Display usage information
 
 ### Input Validation
@@ -69,3 +74,4 @@
 4. Provides clear error messages for invalid input
 5. Returns solution in under 1 second for typical puzzles
 6. Generates valid, solvable Sudoku puzzles at three difficulty levels
+7. Generates PDF book with puzzles and solutions
