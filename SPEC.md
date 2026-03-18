@@ -10,17 +10,23 @@
 
 ### Core Features
 1. **Dancing Links (DLX) Algorithm**: Implement Algorithm X with dancing links for efficient exact cover solving
-2. **Solve Command**: Accept 81-character string from command line representing the puzzle
-3. **Generate Command**: Generate valid Sudoku puzzles with solutions
-4. **Configurable Empty Cell**: Allow users to specify the empty cell character via `-e` flag (default: `-`)
-5. **Input Validation**: Validate puzzle format (81 chars, valid digits, valid empty marker)
-6. **Solution Output**: Display solved puzzle as 81-character string and formatted 9x9 grid
+2. **Solve Command**: Accept 81-character puzzle string from positional argument or stdin
+3. **Generate Command**: Generate a 81 character string of a valid Sudoku puzzle
+4. **Display Command**: Render a Sudoku board from an 81-character string
+5. **IsValid Command**: Check if a puzzle is valid (no duplicates in row/col/box)
+6. **Configurable Empty Cell**: Allow users to specify the empty cell character via `-e` flag (default: `-`)
+6. **Input Validation**: Validate puzzle format (81 chars, valid digits, valid empty marker)
 
 ### Command Line Interface
-- `solve <puzzle>`: Solve a Sudoku puzzle (positional argument: 81-character puzzle string)
+- `solve [puzzle]`: Solve a Sudoku puzzle (positional argument or stdin)
   - `-e, --empty` flag: Character representing empty cells (default: `-`)
 - `generate`: Generate a new Sudoku puzzle
   - `-d, --difficulty` flag: Difficulty level - easy (30 removed), medium (40 removed), hard (50 removed) (default: easy)
+  - `-e, --empty` flag: Character representing empty cells (default: `-`)
+- `display [puzzle]`: Display a Sudoku board (positional argument or stdin)
+  - `-e, --empty` flag: Character representing empty cells (default: `-`)
+- `isvalid [puzzle]`: Check if a puzzle is valid (positional argument or stdin)
+  - `-e, --empty` flag: Character representing empty cells (default: `-`)
 - `-h, --help` flag: Display usage information
 
 ### Input Validation
@@ -42,7 +48,8 @@
   - `Solved [81]int`: The solved grid
 - `String(emptyChar)` method: Returns 81-char string representation with empty char
 - `SolvedString()` method: Returns 81-char string of solution
-- `FormatGrid(s string)` function: Formats 81-char string as readable 9x9 grid
+- `FormatGrid(s, emptyChar string)` function: Formats 81-char string as readable 9x9 grid
+- `IsValid(puzzle, emptyChar string)` function: Returns true if puzzle is valid
 
 ### Dancing Links Structure
 - Implement exact cover matrix for Sudoku constraints:

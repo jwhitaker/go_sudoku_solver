@@ -12,11 +12,9 @@ import (
 	"github.com/jwhitaker/go_sudoku_solver/pkg/solver"
 )
 
-var emptyChar string
-
-var solveCmd = &cobra.Command{
-	Use:   "solve [puzzle]",
-	Short: "Solve a Sudoku puzzle",
+var displayCmd = &cobra.Command{
+	Use:   "display [puzzle]",
+	Short: "Display a Sudoku puzzle",
 	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var puzzle string
@@ -30,17 +28,11 @@ var solveCmd = &cobra.Command{
 		puzzle = strings.ReplaceAll(puzzle, "\n", "")
 		puzzle = strings.ReplaceAll(puzzle, " ", "")
 
-		solution, err := solver.Solve(puzzle, emptyChar)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
-
-		fmt.Println(solution)
+		fmt.Println(solver.FormatGrid(puzzle, emptyChar))
 	},
 }
 
 func init() {
-	solveCmd.Flags().StringVarP(&emptyChar, "empty", "e", "-", "empty cell character")
-	RootCmd.AddCommand(solveCmd)
+	displayCmd.Flags().StringVarP(&emptyChar, "empty", "e", "-", "empty cell character")
+	RootCmd.AddCommand(displayCmd)
 }

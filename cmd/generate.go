@@ -21,15 +21,12 @@ var generateCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		fmt.Println("Puzzle:")
-		fmt.Println(puzzle.String("-"))
-		fmt.Println()
-		fmt.Println("Solution:")
-		fmt.Println(puzzle.SolvedString())
+		fmt.Println(puzzle.String(emptyChar))
 	},
 }
 
 func init() {
 	generateCmd.Flags().StringVarP(&difficulty, "difficulty", "d", "easy", "difficulty level (easy, medium, hard)")
+	generateCmd.Flags().StringVarP(&emptyChar, "empty", "e", "-", "empty cell character")
 	RootCmd.AddCommand(generateCmd)
 }

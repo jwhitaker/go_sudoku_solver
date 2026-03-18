@@ -260,9 +260,12 @@ func Solve(puzzle string, emptyChar string) (string, error) {
 	return string(solution), nil
 }
 
-func FormatGrid(puzzle string) string {
+func FormatGrid(puzzle string, emptyChar string) string {
 	var result strings.Builder
 	for i, ch := range puzzle {
+		if ch == '0' {
+			ch = rune(emptyChar[0])
+		}
 		if i > 0 && i%9 == 0 {
 			result.WriteString("\n")
 		}
@@ -278,4 +281,83 @@ func FormatGrid(puzzle string) string {
 		}
 	}
 	return result.String()
+}
+
+func IsValid(puzzle string, emptyChar string) bool {
+	puzzle = strings.TrimSpace(puzzle)
+	if len(puzzle) != 81 {
+		return false
+	}
+
+	validChars := "123456789" + emptyChar
+	seen := make(map[rune]bool)
+	for _, ch := range validChars {
+		seen[ch] = true
+	}
+	seen['0'] = true
+
+	for _, ch := range puzzle {
+		if !seen[ch] {
+			return false
+		}
+	}
+
+	grid := make([]int, 81)
+	for i, ch := range puzzle {
+		if ch == rune(emptyChar[0]) || ch == '0' {
+			grid[i] = 0
+		} else {
+			n, _ := fmt.Sscanf(string(ch), "%d", &grid[i])
+			if n == 0 {
+				return false
+			}
+		}
+	}
+
+	for row := 0; row < 9; row++ {
+		seen := make(map[int]bool)
+		for col := 0; col < 9; col++ {
+			val := grid[row*9+col]
+			if val != 0 {
+				if seen[val] {
+					return false
+				}
+				seen[val] = true
+			}
+		}
+	}
+
+	for col := 0; col < 9; col++ {
+		seen := make(map[int]bool)
+		for row := 0; row < 9; row++ {
+			val := grid[row*9+col]
+			if val != 0 {
+				if seen[val] {
+					return false
+				}
+				seen[val] = true
+			}
+		}
+	}
+
+	for boxRow := 0; boxRow < 3; boxRow++ {
+		for boxCol := 0; boxCol < 3; boxCol++ {
+			seen := make(map[int]bool)
+			for r := 0; r < 3; r++ {
+				for c := 0; c < 3; c++ {
+					row := boxRow*3 + r
+					col := boxCol*3 + c
+					val := grid[row*9+col]
+					if val != 0 {
+						if seen[val] {
+							return false
+						}
+						seen[val] = true
+					}
+				}
+			}
+		}
+	}
+
+	return true
 }
