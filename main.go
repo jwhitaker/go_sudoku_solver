@@ -2,7 +2,8 @@ package main
 
 import (
 	"os"
-	"sudoku-solver/cmd"
+
+	"github.com/jwhitaker/go_sudoku_solver/cmd"
 )
 
 func main() {

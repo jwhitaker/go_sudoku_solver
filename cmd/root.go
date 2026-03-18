@@ -5,6 +5,6 @@ import (
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "sudoku-solver",
+	Use:   "go-sudoku-solver",
 	Short: "A Sudoku solver using Dancing Links",
 }

@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"sudoku-solver/pkg/solver"
+	"github.com/jwhitaker/go_sudoku_solver/pkg/solver"
 )
 
 var difficulty string
