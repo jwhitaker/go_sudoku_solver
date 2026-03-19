@@ -31,6 +31,7 @@
   - `-e, --easy` flag: Number of easy puzzles (default: 5)
   - `-m, --medium` flag: Number of medium puzzles (default: 5)
   - `-H, --hard` flag: Number of hard puzzles (default: 5)
+  - `-t, --title` flag: Title of the book (default: "Sudoku Puzzles")
 - `-h, --help` flag: Display usage information
 
 ### Input Validation

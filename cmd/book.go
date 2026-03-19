@@ -56,39 +56,77 @@ var bookCmd = &cobra.Command{
 		}
 
 		pdf := gofpdf.New("P", "mm", "A4", "")
-		pdf.SetAutoPageBreak(true, 10)
 
-		drawGrid := func(p *gofpdf.Fpdf, puzzle string, startX, startY float64) {
-			p.SetLineWidth(0.5)
+		pageWidth := 210.0
+		pageHeight := 297.0
+		margin := 15.0
+		gridSize := 180.0
+		cellSize := gridSize / 9.0
+
+		startX := (pageWidth - gridSize) / 2
+		startY := margin + 15
+
+		drawLargeGrid := func(p *gofpdf.Fpdf, puzzle string) {
 			for i := 0; i <= 9; i++ {
-				lw := 0.3
+				lw := 0.4
 				if i%3 == 0 {
-					lw = 0.8
+					lw = 1.0
 				}
 				p.SetLineWidth(lw)
-				p.Line(startX, startY+float64(i)*9, startX+81, startY+float64(i)*9)
-				p.Line(startX+float64(i)*9, startY, startX+float64(i)*9, startY+81)
+				p.Line(startX, startY+float64(i)*cellSize, startX+gridSize, startY+float64(i)*cellSize)
+				p.Line(startX+float64(i)*cellSize, startY, startX+float64(i)*cellSize, startY+gridSize)
 			}
 
-			p.SetFont("Helvetica", "", 14)
+			p.SetFont("Helvetica", "", 16)
 			for i, ch := range puzzle {
-				row := i / 9
-				col := i % 9
-				x := startX + float64(col)*9 + 3
-				y := startY + float64(row)*9 + 3
 				if string(ch) != "-" {
-					p.Text(x, y, string(ch))
+					row := i / 9
+					col := i % 9
+					x := startX + float64(col)*cellSize + cellSize/2
+					y := startY + float64(row)*cellSize + cellSize/2 + 5
+					p.Text(x-p.GetStringWidth(string(ch))/2, y, string(ch))
 				}
 			}
 		}
 
+		solutionSize := 50.0
+		solutionCellSize := solutionSize / 9.0
+
+		drawSmallGrid := func(p *gofpdf.Fpdf, puzzle string, startX, startY float64) {
+			for i := 0; i <= 9; i++ {
+				lw := 0.2
+				if i%3 == 0 {
+					lw = 0.5
+				}
+				p.SetLineWidth(lw)
+				p.Line(startX, startY+float64(i)*solutionCellSize, startX+solutionSize, startY+float64(i)*solutionCellSize)
+				p.Line(startX+float64(i)*solutionCellSize, startY, startX+float64(i)*solutionCellSize, startY+solutionSize)
+			}
+
+			p.SetFont("Helvetica", "", 5)
+			for i, ch := range puzzle {
+				row := i / 9
+				col := i % 9
+				x := startX + float64(col)*solutionCellSize + solutionCellSize/2
+				y := startY + float64(row)*solutionCellSize + solutionCellSize/2 + 1.5
+				p.Text(x-p.GetStringWidth(string(ch))/2, y, string(ch))
+			}
+		}
+
 		pdf.AddPage()
-		pdf.SetFont("Helvetica", "B", 24)
-		pdf.Cell(0, 15, "Sudoku Puzzles")
-		pdf.Ln(20)
+		pdf.SetFont("Helvetica", "B", 36)
+		pdf.Cell(0, pageHeight/2-20, title)
+		pdf.Ln(10)
+		pdf.SetFont("Helvetica", "", 14)
+		pdf.Cell(0, 10, fmt.Sprintf("%d Easy | %d Medium | %d Hard", easyCount, mediumCount, hardCount))
+		pdf.Ln(10)
+		pdf.SetFont("Helvetica", "", 12)
+		pdf.Cell(0, 10, fmt.Sprintf("%d Puzzles", len(puzzles)))
+
+		pdf.AddPage()
 
 		for i, puzzle := range puzzles {
-			if i > 0 && i%6 == 0 {
+			if i > 0 {
 				pdf.AddPage()
 			}
 
@@ -101,30 +139,37 @@ var bookCmd = &cobra.Command{
 				}
 			}
 
-			pdf.SetFont("Helvetica", "", 10)
-			pdf.Cell(0, 5, fmt.Sprintf("Puzzle %d (%s)", i+1, diff))
-			pdf.Ln(5)
+			pdf.SetFont("Helvetica", "B", 14)
+			pdf.Cell(0, 8, fmt.Sprintf("Puzzle %d (%s)", i+1, diff))
 
-			drawGrid(pdf, puzzle.String("-"), 10, pdf.GetY())
-			pdf.Ln(90)
+			drawLargeGrid(pdf, puzzle.String("-"))
 		}
 
 		pdf.AddPage()
-		pdf.SetFont("Helvetica", "B", 24)
-		pdf.Cell(0, 15, "Solutions")
-		pdf.Ln(20)
 
-		for i, puzzle := range puzzles {
-			if i > 0 && i%6 == 0 {
+		solutionsPerRow := 3
+		solutionsPerCol := 3
+		solutionsPerPage := solutionsPerRow * solutionsPerCol
+		solutionSpacingX := solutionSize + 10
+		solutionSpacingY := solutionSize + 12
+		startXSolutions := (pageWidth - (float64(solutionsPerRow)*solutionSize + float64(solutionsPerRow-1)*10)) / 2
+
+		for i := range puzzles {
+			if i > 0 && i%solutionsPerPage == 0 {
 				pdf.AddPage()
 			}
 
-			pdf.SetFont("Helvetica", "", 10)
-			pdf.Cell(0, 5, fmt.Sprintf("Solution %d", i+1))
-			pdf.Ln(5)
+			pageIndex := i % solutionsPerPage
+			pageRow := pageIndex / solutionsPerRow
+			pageCol := pageIndex % solutionsPerRow
 
-			drawGrid(pdf, puzzle.SolvedString(), 10, pdf.GetY())
-			pdf.Ln(90)
+			x := startXSolutions + float64(pageCol)*solutionSpacingX
+			y := margin + 10 + float64(pageRow)*solutionSpacingY
+
+			pdf.SetFont("Helvetica", "", 7)
+			pdf.Text(x+solutionSize/2-2.5, y-2.5, fmt.Sprintf("%d", i+1))
+
+			drawSmallGrid(pdf, puzzles[i].SolvedString(), x, y)
 		}
 
 		err := pdf.OutputFileAndClose(filename)
@@ -137,11 +182,12 @@ var bookCmd = &cobra.Command{
 	},
 }
 
-var easy, medium, hard string
+var easy, medium, hard, title string
 
 func init() {
 	bookCmd.Flags().StringVarP(&easy, "easy", "e", "5", "number of easy puzzles")
 	bookCmd.Flags().StringVarP(&medium, "medium", "m", "5", "number of medium puzzles")
 	bookCmd.Flags().StringVarP(&hard, "hard", "H", "5", "number of hard puzzles")
+	bookCmd.Flags().StringVarP(&title, "title", "t", "Sudoku Puzzles", "title of the book")
 	RootCmd.AddCommand(bookCmd)
 }
