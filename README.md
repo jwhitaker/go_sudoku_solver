@@ -24,6 +24,10 @@ Generate a PDF book of puzzles with solutions.
 ./sudoku book puzzles.pdf -e 10 -m 5 -H 3
 ```
 
+![Book Title Page](docs/screen_shot_1.png)
+
+![Book Solutions Page](docs/screen_shot_2.png)
+
 ### Solve
 
 Solve a Sudoku puzzle from a string or stdin.
